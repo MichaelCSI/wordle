@@ -11,9 +11,12 @@ body {
 }
 
 .row-letter {
-    height: 2.5rem;
-    width: 2.5rem;
+    height: 2rem;
+    width: 3rem;
     border: 2px solid #c4bebe;
+    padding-top: 1rem;
     margin: 0 0.1rem;
+    font-weight: bold;
+    font-size: 20px;
     transition: 0.6s;
 }
