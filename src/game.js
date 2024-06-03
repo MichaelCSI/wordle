@@ -79,18 +79,33 @@ function submitWord() {
     }
     let matchingLetters = checkWords();
 
-    // Update UI with correct letters
+    // Update guess board and keyboard colors on UI for correct letters
     let rowNum = 6 - numberOfGuessesLeft;
     for (let letterNum = 0; letterNum < 5; letterNum++) {
-        const letterElement = document.getElementById("row"+rowNum+"Letter"+letterNum);
-        letterElement.style.color = "black";
+        const guessLetter = document.getElementById("row"+rowNum+"Letter"+letterNum);
+        guessLetter.style.color = "black";
 
         if(matchingLetters[letterNum] === 3) {
-            letterElement.style.backgroundColor = "green";
+            guessLetter.style.backgroundColor = "green";
+
+            let keyboardKeyId = currentGuess[letterNum].toLowerCase();
+            const keyboardKey = document.getElementById(keyboardKeyId);
+            keyboardKey.style.backgroundColor = "green";
+
         } else if (matchingLetters[letterNum] === 2) {
-            letterElement.style.backgroundColor = "yellow";
+            guessLetter.style.backgroundColor = "yellow";
+
+            let keyboardKeyId = currentGuess[letterNum].toLowerCase();
+            const keyboardKey = document.getElementById(keyboardKeyId);
+            keyboardKey.style.backgroundColor = "yellow";
+
         } else {
-            letterElement.style.backgroundColor = "gray";
+            guessLetter.style.backgroundColor = "gray";
+
+            let keyboardKeyId = currentGuess[letterNum].toLowerCase();
+            const keyboardKey = document.getElementById(keyboardKeyId);
+            keyboardKey.style.backgroundColor = "gray";
+
         }
     }
 
@@ -176,9 +191,39 @@ function resetGame() {
     currentWord = fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].toUpperCase();
     numberOfGuessesLeft = 6;
     currentGuess = [];
+    const keyboardKeys = document.getElementsByClassName("keyboard-button");
+    for(let i = 0; i < keyboardKeys.length; i++) {
+        let currentKey = keyboardKeys[i];
+        currentKey.style.backgroundColor = "ivory";
+    }
     createLayout();
 }
 
-window.addEventListener("keydown", handleKeyPress);
+function startGame() {
+    createLayout();
 
-createLayout();
+    // Set up listener for keyboard input and onClicks for UI keyboard
+    window.addEventListener("keydown", handleKeyPress);
+    const keyboardKeys = document.getElementsByClassName("keyboard-button");
+    for(let i = 0; i < keyboardKeys.length; i++) {
+        let currentKey = keyboardKeys[i];
+        if(currentKey.innerHTML === "Enter") {
+            currentKey.onclick = function() {
+                // Prevent repeated submissions / clicks for the same guess
+                currentKey.disabled = true;
+                submitWord();
+                setTimeout(() => {
+                    currentKey.disabled = false;
+                  }, 1000);
+            }
+        } else if(currentKey.innerHTML === "Delete") {
+            currentKey.onclick = deleteLetter;
+        } else {
+            currentKey.onclick = function() {
+                addLetter(currentKey.innerHTML)
+            };
+        }
+    }
+}
+
+startGame();
