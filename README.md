@@ -16,4 +16,9 @@ Feedback:
 
 ## Screenshots
 
-TODO
+![Wordle game screenshot 1 - Guess 0](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/wordle%201.png)
+![Wordle game screenshot 2 - Guess 1](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/wordle%202.png)
+![Wordle game screenshot 3 - Guess 2](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/wordle%203.png)
+![Wordle game screenshot 4 - Win](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/wordle%204.png)
+![Wordle game screenshot 5 - Loss](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/wordle%205.png)
+
