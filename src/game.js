@@ -1,5 +1,22 @@
 const fiveLetterWords = [
-    "apple", "grape", "lemon", "melon", "peach"
+    "apple", "bread", "candy", "drink", "eagle",
+    "fruit", "grape", "honey", "image", "joker",
+    "knife", "lemon", "mango", "night", "ocean",
+    "piano", "queen", "robot", "snake", "tiger",
+    "unite", "vivid", "whale", "viola", "young",
+    "zebra", "amber", "blaze", "charm", "dwarf",
+    "eager", "flame", "globe", "haste", "irony",
+    "jewel", "kneel", "loyal", "mirth", "novel",
+    "oasis", "plush", "quake", "realm", "spine",
+    "trend", "usher", "vigor", "waltz", "peach",
+    "yeast", "azure", "boast", "crisp", "daisy",
+    "elite", "fancy", "glory", "haste", "ivory",
+    "jolly", "knead", "leapt", "moist", "noble",
+    "otter", "pearl", "quill", "raven", "sight",
+    "twist", "ultra", "voice", "wrath", "xerox",
+    "youth", "zonal", "afire", "bloom", "chase",
+    "dwell", "enact", "flesh", "grasp", "hound",
+    "intro", "jumpy", "kudos", "lodge", "merit"
 ];
   
 let currentWord = fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].toUpperCase();
@@ -69,9 +86,6 @@ function deleteLetter() {
 }
 
 // Submit a word as a guess
-    // TODO
-    // Submitted word has to be valid? Get list from the internet?
-    // Could modify it to not require valid words as input
 function submitWord() {
     if(currentGuess.length != 5) {
         console.log("Word is not 5 letters long");
