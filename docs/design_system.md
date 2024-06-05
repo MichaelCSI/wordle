@@ -1,4 +1,5 @@
 Main Components
+- Main title with our names as well as a page footer with guess input explanation
 - gameLayout element that contains 6 rows of tiles, each row represents a guess word
   - Each tile row contains 5 square boxes for the 5 letters in the guess word
 - keyboard element that contains 3 rows of keys, acts as an interactable keyboard for the UI
