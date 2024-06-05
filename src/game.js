@@ -112,27 +112,25 @@ function submitWord() {
         const guessLetter = document.getElementById("row"+rowNum+"Letter"+letterNum);
         guessLetter.style.color = "black";
 
+        let keyboardKeyId = currentGuess[letterNum].toLowerCase();
+        const keyboardKey = document.getElementById(keyboardKeyId);
+
         if(matchingLetters[letterNum] === "green") {
             guessLetter.style.backgroundColor = "green";
-
-            let keyboardKeyId = currentGuess[letterNum].toLowerCase();
-            const keyboardKey = document.getElementById(keyboardKeyId);
             keyboardKey.style.backgroundColor = "green";
 
         } else if (matchingLetters[letterNum] === "yellow") {
             guessLetter.style.backgroundColor = "yellow";
-
-            let keyboardKeyId = currentGuess[letterNum].toLowerCase();
-            const keyboardKey = document.getElementById(keyboardKeyId);
-            keyboardKey.style.backgroundColor = "yellow";
-
+            // Only update keyboard key to yellow if not already green
+            if(keyboardKey.style.backgroundColor != "green") {
+                keyboardKey.style.backgroundColor = "yellow";
+            }
         } else {
             guessLetter.style.backgroundColor = "gray";
-
-            let keyboardKeyId = currentGuess[letterNum].toLowerCase();
-            const keyboardKey = document.getElementById(keyboardKeyId);
-            keyboardKey.style.backgroundColor = "gray";
-
+            // Only update keyboard key to gray if not already green/yellow
+            if(keyboardKey.style.backgroundColor != "green" && keyboardKey.style.backgroundColor != "yellow") {
+                keyboardKey.style.backgroundColor = "gray";
+            }
         }
     }
 
