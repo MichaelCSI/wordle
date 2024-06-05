@@ -18,13 +18,14 @@ const fiveLetterWords = [
     "dwell", "enact", "flesh", "grasp", "hound",
     "intro", "jumpy", "kudos", "lodge", "merit"
 ];
-  
+
 let currentWord = fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].toUpperCase();
 let currentGuess = []
 let numberOfGuessesLeft = 6;
 
+// Create the html elements for the game tiles
 function createLayout() {
-    const gameLayout = document.querySelector("#gameLayout");
+    const gameLayout = document.getElementById("gameLayout");
     gameLayout.innerHTML = "";
     // Create 6 rows
     for (let rowNumber = 0; rowNumber < 6; rowNumber++) {
@@ -43,8 +44,20 @@ function createLayout() {
     }
 }
 
+// Create an html element for a win/loss popup
+function createPopup(message) {
+    const popup = document.getElementById("popup");
+    popup.innerHTML = message;
+    // Fade the popup in and out
+    popup.classList.toggle("fade-in");
+    setTimeout(() => {
+        popup.classList.toggle("fade-in");
+    }, 2000);
+}
+
+// Read keyboard input from user
 function handleKeyPress(event) {
-    // Check if the pressed key is a letter
+    // Check if the pressed key is a letter with regex
     if (event.key.match(/^[a-zA-Z]$/)) {
         addLetter(event.key.toUpperCase());
     } else if (event.key === "Backspace") {
@@ -123,6 +136,9 @@ function submitWord() {
         }
     }
 
+    numberOfGuessesLeft--;
+    currentGuess = [];
+
     // Wait a bit for UI to update, then check for win/loss/continue
     setTimeout(() => {
         checkGameState(matchingLetters)
@@ -176,6 +192,7 @@ function checkWords() {
     return result;
 }
 
+// Update game state - win, loss, or just go to next turn
 function checkGameState(matchingLetters) {
     // Check for win
     let win = true;
@@ -185,21 +202,19 @@ function checkGameState(matchingLetters) {
         }
     }
     if(win) {
-        alert("YOU WON");
-        resetGame();
+        createPopup("YOU WON");
+        setTimeout(resetGame, 3000);
         return;
     }
-
-    numberOfGuessesLeft--;
-    currentGuess = [];
 
     // Check for loss
     if(numberOfGuessesLeft === 0){
-        alert("YOU LOST");
-        resetGame();
+        createPopup("YOU LOST<br>Correct Word: "+currentWord);
+        setTimeout(resetGame, 3000);
         return;
     }
 }
+
 
 function resetGame() {
     currentWord = fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].toUpperCase();

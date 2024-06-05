@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Metadata and stylesheet linking -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,14 +8,15 @@
     <title>Wordle</title>
 </head>
 <body>
-    <!-- Main heading of the page -->
     <h1> Wordle Clone </h1>
-    <!-- Authors of the project -->
     <p>Made by Michael O'Sullivan and Demian Oportus</p>
     <hr>
     
     <!-- Container for the game layout -->
     <div id="gameLayout"></div>
+
+    <!-- Popup for win / loss message -->
+    <div id="popup"></div>
 
     <!-- Virtual keyboard for the game -->
     <div id="keyboard">
@@ -60,11 +60,9 @@
     </div>
 
     <hr>
-    <!-- Note about the game's word validation -->
     <p>Note: We are relying on pure HTML/CSS/JS and no third-party resources, so guess words are not validated against a dictionary of real 5 letter words</p>
     <p>Example: AAAAA is a valid guess and will not raise an error</p>
 
-    <!-- Linking the JavaScript file for the game -->
     <script src="./game.js"></script>
 </body>
 </html>
