@@ -148,27 +148,18 @@ function submitWord() {
 
 // Helper function for word submission
 function checkWords() {    
-    // Build guess word from guess array
-    let guessedWord = "";
-    for (let i = 0; i < 5; i++) {
-        guessedWord += currentGuess[i];
+    // Keep map of letter counts in current word to track duplicate letters (avoid false positives)
+    let letterMap = new Map();
+    for(let i = 0; i < 5; i++) {
+        letterMap.set(currentWord[i], (letterMap[currentWord[i]] || 0) + 1)
     }
 
     let matchingPositions = Array(5).fill(false);
-
-    // Check for matching letters in same position and build strings based on letters not matched
-    // I.e. for APPLE with guess STABLE we'd be left with APP.. and STA--, which we would compare
-    let unmatchedWord = [];
-    let unmatchedGuess = [];
+    // Check for matching letters in same position and build string based on letters not matched
     for (let i = 0; i < 5; i++) {
-        if (guessedWord[i] === currentWord[i]) {
+        if (currentGuess[i] === currentWord[i]) {
             matchingPositions[i] = true;
-            // Push any characters into unmatched array so long as the characters don't match
-            unmatchedWord.push(".");
-            unmatchedGuess.push("-");
-        } else {
-            unmatchedWord.push(currentWord[i]);
-            unmatchedGuess.push(currentGuess[i]);
+            letterMap.set(currentGuess[i], letterMap[currentGuess[i]] - 1)
         }
     }
 
@@ -179,8 +170,9 @@ function checkWords() {
         if(matchingPositions[i] === true) {
             continue;
         } else {
-            if (unmatchedWord.includes(unmatchedGuess[i])) {
+            if (currentWord.includes(currentGuess[i]) && letterMap.get(currentGuess[i]) >= 1) {
                 matchingLetters[i] = true;
+                letterMap.set(currentGuess[i], letterMap[currentGuess[i]] - 1)
             }
         }
     }
