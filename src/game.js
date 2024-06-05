@@ -147,30 +147,39 @@ function submitWord() {
 
 
 // Helper function for word submission
-function checkWords() {
-    let matchingPositions = Array(5).fill(false);
-    let matchingLetters = Array(5).fill(false);
-    
+function checkWords() {    
     // Build guess word from guess array
     let guessedWord = "";
     for (let i = 0; i < 5; i++) {
         guessedWord += currentGuess[i];
     }
 
-    // Check for matching letters in same position
+    let matchingPositions = Array(5).fill(false);
+
+    // Check for matching letters in same position and build strings based on letters not matched
+    // I.e. for APPLE with guess STABLE we'd be left with APP.. and STA--, which we would compare
+    let unmatchedWord = [];
+    let unmatchedGuess = [];
     for (let i = 0; i < 5; i++) {
         if (guessedWord[i] === currentWord[i]) {
             matchingPositions[i] = true;
-            matchingLetters[i] = true;
+            // Push any characters into unmatched array so long as the characters don't match
+            unmatchedWord.push(".");
+            unmatchedGuess.push("-");
+        } else {
+            unmatchedWord.push(currentWord[i]);
+            unmatchedGuess.push(currentGuess[i]);
         }
     }
 
+    let matchingLetters = Array(5).fill(false);
+
     // Check for matching letters in different position
     for (let i = 0; i < 5; i++) {
-        if(matchingPositions[i] === true || matchingLetters[i] == true) {
+        if(matchingPositions[i] === true) {
             continue;
         } else {
-            if (currentWord.includes(guessedWord[i])) {
+            if (unmatchedWord.includes(unmatchedGuess[i])) {
                 matchingLetters[i] = true;
             }
         }
@@ -180,7 +189,7 @@ function checkWords() {
     // Green (contains same letter/position), Yellow (contains same letter), Gray (does not contain letter)
     let result = [];
     for (let i = 0; i < 5; i++) {
-        if(matchingPositions[i] && matchingLetters[i]) {
+        if(matchingPositions[i]) {
             result.push("green");
         } else if (matchingLetters[i]) {
             result.push("yellow");
@@ -197,7 +206,7 @@ function checkGameState(matchingLetters) {
     // Check for win
     let win = true;
     for (let i = 0; i < 5; i++) {
-        if(matchingLetters[i] != 3) {
+        if(matchingLetters[i] != "green") {
             win = false;
         }
     }
