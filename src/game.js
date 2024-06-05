@@ -112,14 +112,14 @@ function submitWord() {
         const guessLetter = document.getElementById("row"+rowNum+"Letter"+letterNum);
         guessLetter.style.color = "black";
 
-        if(matchingLetters[letterNum] === 3) {
+        if(matchingLetters[letterNum] === "green") {
             guessLetter.style.backgroundColor = "green";
 
             let keyboardKeyId = currentGuess[letterNum].toLowerCase();
             const keyboardKey = document.getElementById(keyboardKeyId);
             keyboardKey.style.backgroundColor = "green";
 
-        } else if (matchingLetters[letterNum] === 2) {
+        } else if (matchingLetters[letterNum] === "yellow") {
             guessLetter.style.backgroundColor = "yellow";
 
             let keyboardKeyId = currentGuess[letterNum].toLowerCase();
@@ -177,15 +177,15 @@ function checkWords() {
     }
 
     // Build final array for matching letters
-    // 3 (contains same letter/position), 2 (contains same letter), 1 (does not contain letter)
+    // Green (contains same letter/position), Yellow (contains same letter), Gray (does not contain letter)
     let result = [];
     for (let i = 0; i < 5; i++) {
         if(matchingPositions[i] && matchingLetters[i]) {
-            result.push(3);
+            result.push("green");
         } else if (matchingLetters[i]) {
-            result.push(2);
+            result.push("yellow");
         } else {
-            result.push(1);
+            result.push("gray");
         }
     }
 
