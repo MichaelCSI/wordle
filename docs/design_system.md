@@ -25,6 +25,14 @@ The keyboard contains 3 rows of keys and acts as an interactable keyboard for th
 
 ![UI keyboard screenshot](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/keyboard.png)
 
+### Win/Lose Popup
+
+A popup letting the user know when they have won (if they guess the word) or lost (if they exhaust their gueses)
+
+Win             |  Lose
+:-------------------------:|:-------------------------:
+![Win screenshot](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/endWin.png)  | ![Lose screenshot](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/endLose.png)
+
 ### Footer
 
 ![Footer screenshot](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/footer.png)
