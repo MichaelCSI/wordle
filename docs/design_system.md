@@ -27,7 +27,7 @@ The keyboard contains 3 rows of keys and acts as an interactable keyboard for th
 
 ### Win/Lose Popup
 
-A popup letting the user know when they have won (if they guess the word) or lost (if they exhaust their gueses)
+A popup letting the user know when they have won (if they guess the word) or lost (if they exhaust their guesses)
 
 Win             |  Lose
 :-------------------------:|:-------------------------:
