@@ -1,25 +1,23 @@
-const fiveLetterWords = [
-    "apple", "bread", "candy", "drink", "eagle",
-    "fruit", "grape", "honey", "image", "joker",
-    "knife", "lemon", "mango", "night", "ocean",
-    "piano", "queen", "robot", "snake", "tiger",
-    "unite", "vivid", "whale", "viola", "young",
-    "zebra", "amber", "blaze", "charm", "dwarf",
-    "eager", "flame", "globe", "haste", "irony",
-    "jewel", "kneel", "loyal", "mirth", "novel",
-    "oasis", "plush", "quake", "realm", "spine",
-    "trend", "usher", "vigor", "waltz", "peach",
-    "yeast", "azure", "boast", "crisp", "daisy",
-    "elite", "fancy", "glory", "haste", "ivory",
-    "jolly", "knead", "leapt", "moist", "noble",
-    "otter", "pearl", "quill", "raven", "sight",
-    "twist", "ultra", "voice", "wrath", "xerox",
-    "youth", "zonal", "afire", "bloom", "chase",
-    "dwell", "enact", "flesh", "grasp", "hound",
-    "intro", "jumpy", "kudos", "lodge", "merit"
-];
+// Initialize currentWord immediately with AJAX call
+let currentWord = '';
+function setCurrentWord() {
+    const xmlhttp = new XMLHttpRequest();
+  
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+            if (xmlhttp.status == 200) {
+                const response = JSON.parse(xmlhttp.responseText);
+                currentWord = response.word.toUpperCase();
+                console.log("Fetch our word: " + currentWord);
+            }
+        }
+    };
+    // Make the call synchronous (we only run this once per game and need currentWord to be initialized)
+    xmlhttp.open("GET", "./models/Word.php", false);
+    xmlhttp.send();
+}
+setCurrentWord();
 
-let currentWord = fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].toUpperCase();
 let currentGuess = []
 let numberOfGuessesLeft = 6;
 
@@ -145,7 +143,7 @@ function submitWord() {
 
 
 // Helper function for word submission
-function checkWords() {    
+function checkWords() {   
     // Keep map of letter counts in current word to track duplicate letters (avoid false positives)
     let letterMap = new Map();
     for(let i = 0; i < 5; i++) {
@@ -216,7 +214,7 @@ function checkGameState(matchingLetters) {
 
 
 function resetGame() {
-    currentWord = fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)].toUpperCase();
+    setCurrentWord();
     numberOfGuessesLeft = 6;
     currentGuess = [];
     const keyboardKeys = document.getElementsByClassName("keyboard-button");

@@ -14,6 +14,12 @@ Feedback:
 - The word contains the letter "E" in the same position (Green)
 - All other letters are not contained in the word (Gray)
 
+## Instructions for running the game
+- Open a terminal for the project i.e. ```.../wordle```
+- In the terminal, navigate to the source directory and start the php server: 
+  - ```cd src && php -S localhost:4000```
+- Navigate to ```localhost:4000``` in your browser and the game will appear
+
 ## Screenshots
 
 ![Wordle game screenshot 1 - Guess 0](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/wordle%201.png)
