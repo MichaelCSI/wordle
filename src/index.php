@@ -1,3 +1,9 @@
+<?php
+// Refresh data on page refresh
+session_start();
+$_SESSION = array();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,25 +1,27 @@
-// Initialize currentWord immediately with AJAX call
-let currentWord = '';
-function setCurrentWord() {
+// General API method for calling our PHP backend
+function callAPI(requestType, phpModel, extraParams, callback) {
     const xmlhttp = new XMLHttpRequest();
   
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {
             if (xmlhttp.status == 200) {
-                const response = JSON.parse(xmlhttp.responseText);
-                currentWord = response.word.toUpperCase();
-                console.log("Fetch our word: " + currentWord);
+                if (callback) {
+                    callback(xmlhttp.responseText);
+                }
+            } else {
+                console.log(`Request failed with status ${xmlhttp.status}`);
             }
         }
     };
-    // Make the call synchronous (we only run this once per game and need currentWord to be initialized)
-    xmlhttp.open("GET", "./models/Word.php", false);
-    xmlhttp.send();
+    if(requestType === "GET") {
+        xmlhttp.open(requestType, `./models/${phpModel}.php`+"?"+extraParams, true);
+        xmlhttp.send();
+    } else if (requestType === "POST") {
+        xmlhttp.open(requestType, `./models/${phpModel}.php`, true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send(extraParams);
+    }
 }
-setCurrentWord();
-
-let currentGuess = []
-let numberOfGuessesLeft = 6;
 
 // Create the html elements for the game tiles
 function createLayout() {
@@ -61,175 +63,141 @@ function handleKeyPress(event) {
     } else if (event.key === "Backspace") {
         deleteLetter();
     } else if(event.key === "Enter") {
-        submitWord();
-    } else {
-        return;
+        // Submit a guess for review
+        callAPI("POST", "GameState", 'action=submitWord', (response) => {
+            const responseArray = JSON.parse(response);
+            responseArray.forEach(response => {
+                const guessLetterId = response.guessLetterId;
+                const keyboardKeyId = response.keyboardKeyId.toLowerCase();
+                const guessValue = response.guessValue;
+                console.log(guessLetterId + " - " + keyboardKeyId + " - " + guessValue);
+    
+                const guessLetter = document.getElementById(guessLetterId);
+                const keyboardKey = document.getElementById(keyboardKeyId);
+    
+                // Update the letters on the UI based on correctness
+                if(guessValue === "correct") {
+                    guessLetter.style.backgroundColor = "green";
+                    keyboardKey.style.backgroundColor = "green";
+        
+                } else if (guessValue === "partialCorrect") {
+                    guessLetter.style.backgroundColor = "yellow";
+                    // Only update keyboard key to yellow if not already green
+                    if(keyboardKey.style.backgroundColor != "green") {
+                        keyboardKey.style.backgroundColor = "yellow";
+                    }
+                } else {
+                    guessLetter.style.backgroundColor = "gray";
+                    // Only update keyboard key to gray if not already green/yellow
+                    if(keyboardKey.style.backgroundColor != "green" && keyboardKey.style.backgroundColor != "yellow") {
+                        keyboardKey.style.backgroundColor = "gray";
+                    }
+                }
+            });
+        });
+
+        // Wait a bit for UI to update, then check for win/loss/continue
+        setTimeout(() => {
+            checkGameState()
+          }, 1000);
     }
 }
 
-// Add a letter to the current guess
+// Helper function for adding letters to guess word
 function addLetter(letter) {
-    if(currentGuess.length >= 5) {
-        console.log("Word is already 5 letters long");
-        return;
-    }
-    currentGuess.push(letter);
-    setLetter(letter);
+    callAPI("GET", "GameState", 'action=getState', (response) => {
+        console.log(response);
+        const responseObject = JSON.parse(response);
+        const currentGuess = responseObject.currentGuess;
+        if(currentGuess.length >= 5) {
+            console.log("Word is already 5 letters long");
+            return;
+        }
+
+        // Add a letter to the current guess, for our API this means action=addLetter
+        callAPI("POST", "GameState", 'action=addLetter&letter=' + encodeURIComponent(letter));
+        setLetterUI(letter)
+    })
 }
 
-// Helper function for adding/removing letters from the UI
-function setLetter(letter) {
-    let rowNum = 6 - numberOfGuessesLeft;
-    let letterNum = currentGuess.length - 1;
-    const letterElement = document.getElementById("row"+rowNum+"Letter"+letterNum);
-    letterElement.innerHTML = letter;
-}
-
-// Remove a letter to the current guess
+// Helper function for removing letters from guess word
 function deleteLetter() {
-    if(currentGuess.length <= 0) {
-        console.log("Word is already empty");
-        return;
-    }
-    // Pop from array after UI deletion to avoid index errors
-    setLetter("")
-    currentGuess.pop()
+    callAPI("GET", "GameState", 'action=getState', (response) => {
+        const responseObject = JSON.parse(response);
+        const currentGuess = responseObject.currentGuess;
+        if(currentGuess.length >= 5) {
+            console.log("Word is already empty");
+            return;
+        }
+
+        // Remove a letter from the current guess, for our API this means action=deleteLetter
+        callAPI("POST", "GameState", 'action=deleteLetter');
+        setLetterUI("");
+    })
 }
 
-// Submit a word as a guess
-function submitWord() {
-    if(currentGuess.length != 5) {
-        console.log("Word is not 5 letters long");
-        return;
-    }
-    let matchingLetters = checkWords();
+// Helper function for updating UI after letter addition/deletion to guess
+function setLetterUI(letter) {
+    callAPI("GET", "GameState", 'action=getState', (response) => {
+        const responseObject = JSON.parse(response);
+        const currentGuess = responseObject.currentGuess;
+        const numGuessesLeft = responseObject.numGuessesLeft;
 
-    // Update guess board and keyboard colors on UI for correct letters
-    let rowNum = 6 - numberOfGuessesLeft;
-    for (let letterNum = 0; letterNum < 5; letterNum++) {
-        const guessLetter = document.getElementById("row"+rowNum+"Letter"+letterNum);
-        guessLetter.style.color = "black";
+        let rowNum = 6 - numGuessesLeft;
+        let letterNum = currentGuess.length - 1;
 
-        let keyboardKeyId = currentGuess[letterNum].toLowerCase();
-        const keyboardKey = document.getElementById(keyboardKeyId);
-
-        if(matchingLetters[letterNum] === "green") {
-            guessLetter.style.backgroundColor = "green";
-            keyboardKey.style.backgroundColor = "green";
-
-        } else if (matchingLetters[letterNum] === "yellow") {
-            guessLetter.style.backgroundColor = "yellow";
-            // Only update keyboard key to yellow if not already green
-            if(keyboardKey.style.backgroundColor != "green") {
-                keyboardKey.style.backgroundColor = "yellow";
-            }
-        } else {
-            guessLetter.style.backgroundColor = "gray";
-            // Only update keyboard key to gray if not already green/yellow
-            if(keyboardKey.style.backgroundColor != "green" && keyboardKey.style.backgroundColor != "yellow") {
-                keyboardKey.style.backgroundColor = "gray";
-            }
-        }
-    }
-
-    numberOfGuessesLeft--;
-    currentGuess = [];
-
-    // Wait a bit for UI to update, then check for win/loss/continue
-    setTimeout(() => {
-        checkGameState(matchingLetters)
-      }, 1000);
-}
-
-
-// Helper function for word submission
-function checkWords() {   
-    // Keep map of letter counts in current word to track duplicate letters (avoid false positives)
-    let letterMap = new Map();
-    for(let i = 0; i < 5; i++) {
-        letterMap.set(currentWord[i], (letterMap[currentWord[i]] || 0) + 1)
-    }
-
-    let matchingPositions = Array(5).fill(false);
-    // Check for matching letters in same position and build string based on letters not matched
-    for (let i = 0; i < 5; i++) {
-        if (currentGuess[i] === currentWord[i]) {
-            matchingPositions[i] = true;
-            letterMap.set(currentGuess[i], letterMap[currentGuess[i]] - 1)
-        }
-    }
-
-    let matchingLetters = Array(5).fill(false);
-
-    // Check for matching letters in different position
-    for (let i = 0; i < 5; i++) {
-        if(matchingPositions[i] === true) {
-            continue;
-        } else {
-            if (currentWord.includes(currentGuess[i]) && letterMap.get(currentGuess[i]) >= 1) {
-                matchingLetters[i] = true;
-                letterMap.set(currentGuess[i], letterMap[currentGuess[i]] - 1)
-            }
-        }
-    }
-
-    // Build final array for matching letters
-    // Green (contains same letter/position), Yellow (contains same letter), Gray (does not contain letter)
-    let result = [];
-    for (let i = 0; i < 5; i++) {
-        if(matchingPositions[i]) {
-            result.push("green");
-        } else if (matchingLetters[i]) {
-            result.push("yellow");
-        } else {
-            result.push("gray");
-        }
-    }
-
-    return result;
+        const letterElement = document.getElementById("row"+rowNum+"Letter"+letterNum);
+        letterElement.innerHTML = letter;
+    })
 }
 
 // Update game state - win, loss, or just go to next turn
-function checkGameState(matchingLetters) {
-    // Check for win
-    let win = true;
-    for (let i = 0; i < 5; i++) {
-        if(matchingLetters[i] != "green") {
-            win = false;
-        }
-    }
-    if(win) {
-        createPopup("YOU WON");
-        setTimeout(resetGame, 3000);
-        return;
-    }
+function checkGameState() {
+    callAPI("GET", "GameState", 'action=getState', (response) => {
+        console.log(response);
+        const responseObject = JSON.parse(response);
+        let gameState = responseObject.gameState;
+        let currentWord = responseObject.currentWord;
+        let numGuessesLeft = responseObject.numGuessesLeft;
 
-    // Check for loss
-    if(numberOfGuessesLeft === 0){
-        createPopup("YOU LOST<br>Correct Word: "+currentWord);
-        setTimeout(resetGame, 3000);
-        return;
-    }
+        if(gameState === "Win") {
+            createPopup("YOU WON");
+            setTimeout(() => resetGame(numGuessesLeft), 3000);
+        } else if (gameState === "Lose") {
+            createPopup("YOU LOST<br>Correct Word: "+currentWord);
+            setTimeout(() => resetGame(numGuessesLeft), 3000);
+        }
+    });
 }
 
 
-function resetGame() {
-    setCurrentWord();
-    numberOfGuessesLeft = 6;
-    currentGuess = [];
+function resetGame(numGuessesLeft) {
+    // Get a username for the leaderboard
+    let username = prompt("Enter a username for the leaderboard", "Username");
+    if (!username) {
+        username = "AnonymousUser";
+    }
+    callAPI("POST", "Score", `username=${username}&numguessesleft=${numGuessesLeft}`);
+    callAPI("POST", "GameState", 'action=resetGame');
+
     const keyboardKeys = document.getElementsByClassName("keyboard-button");
     for(let i = 0; i < keyboardKeys.length; i++) {
         let currentKey = keyboardKeys[i];
         currentKey.style.backgroundColor = "ivory";
     }
     createLayout();
+    callAPI("POST", "Word", "action=setWord");
+    callAPI("GET", "Score", "action=getScoreboard", function(response) {
+        console.log(response);
+    });
 }
 
-function startGame() {
+function startGame() {    
     createLayout();
 
     // Set up listener for keyboard input and onClicks for UI keyboard
     window.addEventListener("keydown", handleKeyPress);
+
     const keyboardKeys = document.getElementsByClassName("keyboard-button");
     for(let i = 0; i < keyboardKeys.length; i++) {
         let currentKey = keyboardKeys[i];
@@ -250,6 +218,9 @@ function startGame() {
             };
         }
     }
+
+    // Initialize our word to be guessed
+    callAPI("POST", "Word", "action=setWord");
 }
 
 startGame();

@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $fiveLetterWords = [
     "apple", "bread", "candy", "drink", "eagle",
     "fruit", "grape", "honey", "image", "joker",
@@ -20,9 +22,13 @@ $fiveLetterWords = [
     "intro", "jumpy", "kudos", "lodge", "merit"
 ];
 
-// Select a random word
-$randomWord = $fiveLetterWords[array_rand($fiveLetterWords)];
+if(isset($_POST['action'])) {
+    error_log("Posting to server");
+    if($_POST['action'] === 'setWord') {
+        $_SESSION["currentWord"] = $fiveLetterWords[array_rand($fiveLetterWords)];
+    } else {
+        error_log("Unrecognized POST action");
+    }
+}
 
-// Return the word as a JSON response
-echo json_encode(['word' => $randomWord]);
 ?>
