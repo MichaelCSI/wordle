@@ -18,6 +18,7 @@ Feedback:
 - Open a terminal for the project i.e. ```.../wordle```
 - In the terminal, navigate to the source directory and start the php server: 
   - ```cd src && php -S localhost:4000```
+  - Note that ```localhost:4000``` is an example, other ports may be used as well
 - Navigate to ```localhost:4000``` in your browser and the game will appear
 
 ## Screenshots

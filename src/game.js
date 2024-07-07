@@ -44,19 +44,17 @@ function createLayout() {
     }
 }
 
-// Create an html element for a win/loss popup
-function createPopup(message) {
-    const popup = document.getElementById("popup");
-    popup.innerHTML = message;
-    // Fade the popup in and out
-    popup.classList.toggle("fade-in");
-    setTimeout(() => {
-        popup.classList.toggle("fade-in");
-    }, 2000);
-}
-
 // Read keyboard input from user
 function handleKeyPress(event) {
+    // If target is a textbox (username form), ignore it unless it is submission
+    if (event.target.tagName === 'INPUT') {
+        if(event.key === "Enter") {
+            const popupSubmit = document.getElementById("popupSubmit");
+            popupSubmit.click();
+        }
+        return;
+    }
+
     // Check if the pressed key is a letter with regex
     if (event.key.match(/^[a-zA-Z]$/)) {
         addLetter(event.key.toUpperCase());
@@ -105,46 +103,40 @@ function handleKeyPress(event) {
 
 // Helper function for adding letters to guess word
 function addLetter(letter) {
-    callAPI("GET", "GameState", 'action=getState', (response) => {
-        console.log(response);
-        const responseObject = JSON.parse(response);
-        const currentGuess = responseObject.currentGuess;
-        if(currentGuess.length >= 5) {
-            console.log("Word is already 5 letters long");
-            return;
+    // Add a letter to the current guess, for our API this means action=addLetter
+    callAPI("POST", "GameState", 'action=addLetter&letter=' + encodeURIComponent(letter), function(response) {
+        if(response) {
+            const responseJson = JSON.parse(response);
+            console.log(responseJson.message);
+        } else {
+            setLetterUI(letter, 0);
         }
-
-        // Add a letter to the current guess, for our API this means action=addLetter
-        callAPI("POST", "GameState", 'action=addLetter&letter=' + encodeURIComponent(letter));
-        setLetterUI(letter)
-    })
+    });
 }
 
 // Helper function for removing letters from guess word
 function deleteLetter() {
-    callAPI("GET", "GameState", 'action=getState', (response) => {
-        const responseObject = JSON.parse(response);
-        const currentGuess = responseObject.currentGuess;
-        if(currentGuess.length >= 5) {
-            console.log("Word is already empty");
-            return;
+    callAPI("POST", "GameState", 'action=deleteLetter', function(response) {
+        if(response) {
+            const responseJson = JSON.parse(response);
+            console.log(responseJson.message);
+        } else {
+            // Add offset to avoid index issues after deletion
+            setLetterUI("", 1);
         }
-
-        // Remove a letter from the current guess, for our API this means action=deleteLetter
-        callAPI("POST", "GameState", 'action=deleteLetter');
-        setLetterUI("");
-    })
+    });
 }
 
 // Helper function for updating UI after letter addition/deletion to guess
-function setLetterUI(letter) {
+function setLetterUI(letter, offset) {
     callAPI("GET", "GameState", 'action=getState', (response) => {
         const responseObject = JSON.parse(response);
         const currentGuess = responseObject.currentGuess;
         const numGuessesLeft = responseObject.numGuessesLeft;
+        console.log(response);
 
         let rowNum = 6 - numGuessesLeft;
-        let letterNum = currentGuess.length - 1;
+        let letterNum = currentGuess.length - 1 + offset;
 
         const letterElement = document.getElementById("row"+rowNum+"Letter"+letterNum);
         letterElement.innerHTML = letter;
@@ -161,35 +153,117 @@ function checkGameState() {
         let numGuessesLeft = responseObject.numGuessesLeft;
 
         if(gameState === "Win") {
-            createPopup("YOU WON");
-            setTimeout(() => resetGame(numGuessesLeft), 3000);
+            endGamePopup("YOU WON", numGuessesLeft);
         } else if (gameState === "Lose") {
-            createPopup("YOU LOST<br>Correct Word: "+currentWord);
-            setTimeout(() => resetGame(numGuessesLeft), 3000);
+            endGamePopup("YOU LOST<br>Correct Word: "+currentWord);
         }
     });
 }
 
+// Create an html element for a win/loss popup
+function endGamePopup(message, numGuessesLeft) {
+    const popup = document.getElementById("popup");
+    popup.classList.toggle("fade-in");
 
-function resetGame(numGuessesLeft) {
-    // Get a username for the leaderboard
-    let username = prompt("Enter a username for the leaderboard", "Username");
-    if (!username) {
-        username = "AnonymousUser";
-    }
-    callAPI("POST", "Score", `username=${username}&numguessesleft=${numGuessesLeft}`);
-    callAPI("POST", "GameState", 'action=resetGame');
+    const popupMsg = document.getElementById("popupMessage");
+    popupMsg.innerHTML = message;
+    
+    if(message === "YOU WON") {
+        const popupScore = document.getElementById("popupScore");
+        popupScore.style.display = "block";
+        popupScore.innerHTML = "Score: "+numGuessesLeft;
 
-    const keyboardKeys = document.getElementsByClassName("keyboard-button");
-    for(let i = 0; i < keyboardKeys.length; i++) {
-        let currentKey = keyboardKeys[i];
-        currentKey.style.backgroundColor = "ivory";
+        // Reveal the scoreboard
+        const scoreboard = document.getElementById("scoreboard");
+        scoreboard.classList.toggle("fade-in");
+        callAPI("GET", "Score", "action=getScoreboard", function(response) {
+            const responseArray = JSON.parse(response);
+            updateScoreBoard(responseArray);
+        });
+
+        const usernameInput = document.getElementById("popupUsername");
+        usernameInput.style.display = "block";
+        // Focus on input and maintain focus until submission
+        usernameInput.onblur = function (event) { 
+            setTimeout(function() {
+                usernameInput.focus()
+            }, 10);
+        };
+        usernameInput.focus();
+
+        const popupSubmit = document.getElementById("popupSubmit");
+        popupSubmit.style.display = "inline";
+        popupSubmit.onclick = () => {  
+            let username = usernameInput.value  
+            if (!username) {
+                username = "Anonymous";
+            } else if (username.length > 10) {
+                username = username.substring(0, 7) + "...";
+            }
+            callAPI("POST", "Score", `username=${username}&numguessesleft=${numGuessesLeft}`);
+            popup.classList.toggle("fade-in");
+            scoreboard.classList.toggle("fade-in");
+            usernameInput.onblur = null;
+
+            // Reset game values
+            callAPI("POST", "GameState", 'action=resetGame');
+            callAPI("POST", "Word", "action=setWord");
+
+            // Reset UI
+            setTimeout(function() {
+                usernameInput.value = "";
+                usernameInput.style.display = "none";
+                popupSubmit.style.display = "none";
+                popupScore.style.display = "none";
+
+                const keyboardKeys = document.getElementsByClassName("keyboard-button");
+                for(let i = 0; i < keyboardKeys.length; i++) {
+                    let currentKey = keyboardKeys[i];
+                    currentKey.style.backgroundColor = "ivory";
+                }
+                createLayout();
+            }, 1000);
+        }
     }
-    createLayout();
-    callAPI("POST", "Word", "action=setWord");
-    callAPI("GET", "Score", "action=getScoreboard", function(response) {
-        console.log(response);
-    });
+}
+
+// Create html elements for scoreboard
+function updateScoreBoard(scoreArray) {
+    const scoreTable = document.getElementById("scoreTable");
+
+    // Clear previous score entries
+    scoreTable.innerHTML = "";
+
+    // Set headers
+    const headerRow = scoreTable.insertRow(-1);
+    const leftHeader = headerRow.insertCell(0);
+    leftHeader.classList.toggle("left-cell");
+    leftHeader.classList.toggle("header");
+    leftHeader.textContent = "Username";
+    const rightHeader = headerRow.insertCell(1);
+    rightHeader.classList.toggle("header");
+    rightHeader.textContent = "Score";
+
+    // Create new score entries
+    if(scoreArray) {
+        scoreArray.forEach(item => {
+            const row = scoreTable.insertRow(-1);
+            const leftCell = row.insertCell(0);
+            leftCell.classList.toggle("left-cell");
+            leftCell.textContent = item.username;
+            row.insertCell(1).textContent = item.numguessesleft;
+        });
+    }
+
+    // Fill in any remaining spots on the scoreboard with empty values
+    let scoreBoardSize = scoreArray ? scoreArray.length - 1 : 0;
+    for(let i = scoreBoardSize; i < 10; i++) {
+        const row = scoreTable.insertRow(-1);
+        const leftCell = row.insertCell(0);
+        leftCell.classList.toggle("left-cell");
+        leftCell.textContent = "- - -";
+        row.insertCell(1).textContent = "- - -";
+    }
 }
 
 function startGame() {    

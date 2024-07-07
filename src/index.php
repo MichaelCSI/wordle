@@ -1,7 +1,12 @@
 <?php
-// Refresh data on page refresh
 session_start();
-$_SESSION = array();
+
+// Refresh non-scoreboard data on page refresh
+if(isset($_SESSION['currentWord'])) {
+    $scoreboard = $_SESSION['scoreboard'];
+    $_SESSION = array();
+    $_SESSION['scoreboard'] = $scoreboard;
+}
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +27,18 @@ $_SESSION = array();
     <div id="gameLayout"></div>
 
     <!-- Popup for win / loss message -->
-    <div id="popup"></div>
+    <div id="popup" class="alert">
+        <div id="popupMessage"></div>
+        <div id="popupScore"></div>
+        <input type="text" id="popupUsername" class="form-control" placeholder="Username">
+        <button type="submit" id="popupSubmit">Submit</button>
+    </div>
+
+    <!-- Container for scoreboard and button to proceed -->
+    <div id="scoreboard" class="alert">
+        <h2>Scoreboard</h2>
+        <table id="scoreTable"></table>
+    </div>
 
     <!-- Virtual keyboard for the game -->
     <div id="keyboard">

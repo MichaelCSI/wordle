@@ -14,11 +14,13 @@ if (isset($_POST['action'])) {
     error_log("Posting to server");
     if($_POST['action'] === 'addLetter') {
         if (count($_SESSION["currentGuess"]) >= 5) {
+            echo json_encode(["message" => "Guess is already 5 letters long"]);
             return;
         }
         array_push($_SESSION["currentGuess"], $_POST['letter']);
     } else if ($_POST['action'] === 'deleteLetter') {
-        if (count($_SESSION["currentGuess"]) <= 5) {
+        if (count($_SESSION["currentGuess"]) <= 0) {
+            echo json_encode(["message" => "Guess is already empty"]);
             return;
         }
         array_pop($_SESSION["currentGuess"]);
