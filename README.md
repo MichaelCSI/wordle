@@ -1,4 +1,4 @@
-# CSI 3140 Assignment 2: Wordle in HTML/CSS/JS
+# CSI 3140 Assignments: Wordle
 Michael O'Sullivan and Demian Oportus
 
 ----
