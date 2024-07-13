@@ -1,7 +1,7 @@
 ## Colors
 - **Primary Color:** Ivory for main text, tile borders, UI keyboard
 - **Secondary Colors:** Default black for certain texts and and rgb(31, 28, 28) / light black for main background
-- **Tertiary Colors:** Default green, yellow, and gray for guess feedback
+- **Tertiary Colors:** Default green, hex #FFBF00 (amber), and default gray for guess feedback
 
 ## Fonts
 - **Primary Font:** Georgia, serif for titles and headers

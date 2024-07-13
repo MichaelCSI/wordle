@@ -1,13 +1,13 @@
 <?php
 session_start();
 
-//TODO: Scoreboard logic needs work
-// TODO: Also, maybe dont reset scoreboard in index.php, i.e. reset all other session vars but not this one
-if(isset($_POST['username']) && isset($_POST['numguessesleft'])) {
-    if(!isset($_SESSION["scoreboard"])) {
-        $_SESSION["scoreboard"] = array();
-    } 
+// Initialize scoreboard in session if necessary
+if(!isset($_SESSION["scoreboard"])) {
+    $_SESSION["scoreboard"] = array();
+} 
 
+// Post to / update scoreboard
+if(isset($_POST['username']) && isset($_POST['numguessesleft'])) {
     $new_entry = array("username" => $_POST['username'], "numguessesleft" => $_POST['numguessesleft']);
 
     // Rank users by number of guesses remaining (more is better)
@@ -29,7 +29,9 @@ if(isset($_POST['username']) && isset($_POST['numguessesleft'])) {
     if (count($_SESSION["scoreboard"]) > 10) {
         $_SESSION["scoreboard"] = array_slice($_SESSION["scoreboard"], 0, 10);
     }
-} else if (isset($_GET['action'])) {
+} 
+// Retrieve scoreboard
+else if (isset($_GET['action'])) {
     error_log("Getting from server");
     if($_GET['action'] === 'getScoreboard') {
         echo json_encode($_SESSION["scoreboard"]);
