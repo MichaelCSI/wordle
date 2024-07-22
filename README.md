@@ -16,6 +16,7 @@ Feedback:
 
 ## Instructions for running the game
 > You will need [Node](https://nodejs.org/en) installed on your machine
+- NOTE: If this project has been shared with you, you will have a ```.env``` file with database connection information. Place this file in the root directory of the project
 - Open a terminal for the project i.e. ```.../wordle```
 - In the terminal, navigate to the source directory and install dependencies, then start client/server: 
   - ```npm install```
