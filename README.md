@@ -22,6 +22,11 @@ Feedback:
 - Navigate to ```localhost:8080``` in your browser and the game will appear
   - Note: Running ```npm start``` will output in the terminal where the web app is hosted
 
+## Tech stack used
+- Frontend: Pure HTML / CSS / JS
+- Backend: Express.js API and postgres database (CockroachDB)
+- Hosting: Node.js to host server, http-server to host UI
+
 ## User documentation
 
 Our application has two types of users: WordleUsers (play game) and Admins (manage scoreboard).
