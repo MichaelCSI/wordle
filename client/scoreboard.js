@@ -19,6 +19,63 @@ async function callEndpoint(endpoint, method, data = null) {
     return result;
 }
 
+// Function to build scoreboard
+function updateScoreBoard(scoreArray) {
+    const scoreTable = document.getElementById("scoreTable");
+
+    // Clear previous score entries
+    scoreTable.innerHTML = "";
+
+    // Set headers
+    const headerRow = scoreTable.insertRow(-1);
+
+    const idHeader = headerRow.insertCell(0);
+    idHeader.classList.toggle("left-cell");
+    idHeader.classList.toggle("header");
+    idHeader.textContent = "Score ID";
+
+    const usernameHeader = headerRow.insertCell(1);
+    usernameHeader.classList.toggle("header");
+    usernameHeader.textContent = "Username";
+
+    const scoreHeader = headerRow.insertCell(2);
+    scoreHeader.classList.toggle("header");
+    scoreHeader.textContent = "Score";
+
+    // Create new score entries
+    if(scoreArray) {
+        scoreArray.forEach(score => {
+            const row = scoreTable.insertRow(-1);
+
+            const idEntry = row.insertCell(0);
+            idEntry.classList.toggle("left-cell");
+            idEntry.textContent = score.score_id;
+
+            const usernameEntry = row.insertCell(1);
+            usernameEntry.classList.toggle("left-cell");
+            usernameEntry.textContent = score.user_username;
+            
+            row.insertCell(2).textContent = score.score;
+        });
+    }
+
+    // Fill in any remaining spots on the scoreboard with empty values
+    let scoreBoardSize = scoreArray.length == 0 ? 0 : scoreArray.length - 1;
+    for(let i = scoreBoardSize; i < 10; i++) {
+        const row = scoreTable.insertRow(-1);
+
+        const idEntry = row.insertCell(0);
+        idEntry.classList.toggle("left-cell");
+        idEntry.textContent = "- - -";
+
+        const usernameEntry = row.insertCell(1);
+        usernameEntry.classList.toggle("left-cell");
+        usernameEntry.textContent = "- - -";
+
+        row.insertCell(2).textContent = "- - -";
+    }
+}
+
 
 // Fetch scoreboard list
 callEndpoint(
@@ -26,36 +83,7 @@ callEndpoint(
     "GET"
 ).then(result => {
     console.log('Response:', result);
-
-    const scoreWrapper = document.getElementById("scoreBoardWrapper");
-    if(result.scores.length < 1) {
-        scoreWrapper.innerText = "No Current Score Entries";
-    }
-
-    // Create scoreboard headers
-    const scoreHeaders = document.createElement("div");
-    scoreHeaders.className = "scoreBox";
-    scoreHeaders.innerHTML = "<div>Score ID</div>"
-    scoreHeaders.innerHTML += "<div>Username</div>"
-    scoreHeaders.innerHTML += "<div>Score</div>"
-
-
-    // Add all scores to admin page
-    for (let scoreIndex = 0; scoreIndex < result.scores.length; scoreIndex++) {
-        const scoreElement = document.createElement("div");
-        scoreElement.id = "scoreElement" + scoreIndex;
-        scoreElement.className = "scoreBox";
-
-        let currentScore = result.scores[scoreIndex];
-
-        scoreElement.innerHTML = `<div>${currentScore.score_id}</div>`
-        scoreElement.innerHTML += `<div>${currentScore.user_username}</div>`
-        scoreElement.innerHTML += `<div>${currentScore.score}</div>`
-        
-        scoreWrapper.appendChild(scoreElement);
-    }
+    updateScoreBoard(result.scores);
 }).catch(error => {
     console.error(error);
-    const errorMsg = document.getElementById("errorMsg");
-    errorMsg.innerText = error;
 });

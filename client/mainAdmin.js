@@ -19,6 +19,65 @@ async function callEndpoint(endpoint, method, data = null) {
     return result;
 }
 
+// Function to build scoreboard
+function updateScoreBoard(scoreArray) {
+    const scoreTable = document.getElementById("scoreTable");
+
+    // Clear previous score entries
+    scoreTable.innerHTML = "";
+
+    // Set headers
+    const headerRow = scoreTable.insertRow(-1);
+
+    const idHeader = headerRow.insertCell(0);
+    idHeader.classList.toggle("left-cell");
+    idHeader.classList.toggle("header");
+    idHeader.textContent = "Score ID";
+
+    const usernameHeader = headerRow.insertCell(1);
+    usernameHeader.classList.toggle("header");
+    usernameHeader.textContent = "Username";
+
+    const scoreHeader = headerRow.insertCell(2);
+    scoreHeader.classList.toggle("header");
+    scoreHeader.textContent = "Score";
+
+    // Create new score entries
+    if(scoreArray) {
+        scoreArray.forEach(score => {
+            const row = scoreTable.insertRow(-1);
+
+            const idEntry = row.insertCell(0);
+            idEntry.classList.toggle("left-cell");
+            idEntry.textContent = score.score_id;
+
+            const usernameEntry = row.insertCell(1);
+            usernameEntry.classList.toggle("left-cell");
+            usernameEntry.textContent = score.user_username;
+            
+            row.insertCell(2).textContent = score.score;
+        });
+    }
+
+    // Fill in any remaining spots on the scoreboard with empty values
+    let scoreBoardSize = scoreArray.length == 0 ? 0 : scoreArray.length - 1;
+    for(let i = scoreBoardSize; i < 10; i++) {
+        const row = scoreTable.insertRow(-1);
+
+        const idEntry = row.insertCell(0);
+        idEntry.classList.toggle("left-cell");
+        idEntry.textContent = "- - -";
+
+        const usernameEntry = row.insertCell(1);
+        usernameEntry.classList.toggle("left-cell");
+        usernameEntry.textContent = "- - -";
+        
+        row.insertCell(2).textContent = "- - -";
+    }
+}
+
+
+
 // Set name in top right to admin name and username
 const adminUsernameElement = document.getElementById("adminUsername");
 let adminName = localStorage.getItem("adminName");
@@ -32,60 +91,17 @@ callEndpoint(
 ).then(result => {
     console.log('Response:', result);
 
-    const scoreWrapper = document.getElementById("scoreBoardWrapper");
-    if(result.scores.length < 1) {
-        scoreWrapper.innerText = "No Current Score Entries";
-    }
-
-    // Create scoreboard headers
-    const scoreHeaders = document.createElement("div");
-    scoreHeaders.className = "scoreBox";
-    scoreHeaders.innerHTML = "<div>Score ID</div>"
-    scoreHeaders.innerHTML += "<div>Username</div>"
-    scoreHeaders.innerHTML += "<div>Score</div>"
-
-
     // Add all scores to admin page
-    for (let scoreIndex = 0; scoreIndex < result.scores.length; scoreIndex++) {
-        const scoreElement = document.createElement("div");
-        scoreElement.id = "scoreElement" + scoreIndex;
-        scoreElement.className = "scoreBox";
-
-        let currentScore = result.scores[scoreIndex];
-
-        scoreElement.innerHTML = `<div>${currentScore.score_id}</div>`
-        scoreElement.innerHTML += `<div>${currentScore.user_username}</div>`
-        scoreElement.innerHTML += `<div>${currentScore.score}</div>`
-        
-        scoreWrapper.appendChild(scoreElement);
-    }
-    // Form for deleting score       
-    const errorMsg = document.createElement('h4');
-    errorMsg.id = "errorMsg";
-    scoreWrapper.appendChild(errorMsg);
-
-    const formDelete = document.createElement('form');
-
-    const idLabel = document.createElement('label');
-    idLabel.textContent = 'Score ID:';
-    formDelete.appendChild(idLabel);
-
-    const idInput = document.createElement('input');
-    idInput.type = 'number';
-    idInput.placeholder = 'Example: 010101010101010101';
-    idInput.required = true;
-    formDelete.appendChild(idInput);
-
-    const removeScoreButton = document.createElement('button');
-    removeScoreButton.type = 'submit';
-    removeScoreButton.className = 'completeButton';
-    removeScoreButton.textContent = 'Delete Score';
-    formDelete.appendChild(removeScoreButton);
+    updateScoreBoard(result.scores);
     
+    // Form for deleting score       
+    const formDelete = document.getElementById('formDelete');
     formDelete.addEventListener("submit", function (event) {
         event.preventDefault();
+        const scoreID = document.getElementById("scoreDelete");
+
         const deleteParams = new URLSearchParams({
-            scoreID: currentScore.score_id
+            scoreID: scoreID.value
         }).toString();
     
         callEndpoint(

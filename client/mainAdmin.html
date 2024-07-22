@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./pageStyles.css">
-    <link rel="stylesheet" href="./navAndFooter.css">
+    <link rel="stylesheet" href="./common.css">
     <title> Wordle </title>
 </head>
 <body>
@@ -19,7 +19,22 @@
         </div>
         <span id="adminUsername"></span>
     </div>
-    <div id="scoreBoardWrapper"></div>
+
+    <div id="scoreBoardWrapper">
+      <h2>Scoreboard</h2>
+      <table id="scoreTable"></table>
+    </div>
+
+    <div class="login">
+      <h3>Delete a score</h3>
+      <h4 id="errorMsg"></h4>
+      <form id="formDelete" >
+        <label>Score ID:</label>
+        <input type="number" id="scoreDelete" placeholder="Example: 010101010101010101" required>
+        <button type="submit" class="completeButton" id="login">Delete Score</button>
+      </form>
+    </div>
+
     <footer>
       <div class="footerContent">
         <p>&copy; 2024 Piano App. All rights reserved.</p>

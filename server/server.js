@@ -155,7 +155,8 @@ app.get("/api/admin", async (req, res) => {
 // Endpoint to get scoreboard entries
 app.get('/api/scoreboard', async (req, res) => {
     const text = `
-        SELECT * FROM Scoreboard;
+        SELECT * FROM Scoreboard
+        ORDER BY score DESC;
     `;
     const result = await client.query(text);
 
@@ -195,6 +196,36 @@ app.delete("/api/scoreboard", async (req, res) => {
         });
     } catch (err) {
         console.error("Error executing score delete query", err.stack);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+// Endpoint to enter a scoreboard entry
+app.post("/api/scoreboard", async (req, res) => {
+    const { username, score } = req.body;
+
+    const countSizeText = `SELECT COUNT(*) FROM Scoreboard`
+
+    const insertText = `
+        INSERT INTO Scoreboard (user_username, score) 
+        VALUES ($1, $2)
+    `
+
+    try {
+        const countResult = await client.query(countSizeText);
+        const count = parseInt(countResult.rows[0].count, 10);
+  
+        if (count <= 9) {
+            await client.query(insertText, [username, score]);
+            res.status(200).json({ 
+                msg: "Inserted Score",
+                username: username,
+                score: score
+            });
+        } else {
+          res.status(200).json({ message: 'Scoreboard is full. Cannot add more scores.' });
+        }
+    } catch (err) {
+        console.error("Error executing score insert query", err.stack);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });

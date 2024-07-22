@@ -23,6 +23,27 @@ let currentWord = fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.len
 let currentGuess = []
 let numberOfGuessesLeft = 6;
 
+// Generic function for calling our API get/post methods
+async function callEndpoint(endpoint, method, data = null) {
+    const options = {
+        method: method,
+        headers: { "Content-Type": "application/json" }
+    };
+
+    // Only include body for post method
+    if (method === "POST" && data) {
+        options.body = JSON.stringify(data);
+    }
+
+    const response = await fetch(endpoint, options);
+    if (!response.ok) {
+        throw new Error(response.status);    
+    }
+
+    const result = await response.json();
+    return result;
+}
+
 // Create the html elements for the game tiles
 function createLayout() {
     const gameLayout = document.getElementById("gameLayout");
@@ -136,6 +157,7 @@ function submitWord() {
 
     numberOfGuessesLeft--;
     currentGuess = [];
+    console.log("Don't cheat! But this is the word (for testing): "+currentWord);
 
     // Wait a bit for UI to update, then check for win/loss/continue
     setTimeout(() => {
@@ -202,6 +224,19 @@ function checkGameState(matchingLetters) {
     }
     if(win) {
         createPopup("YOU WON");
+        // Post score to DB
+        callEndpoint(
+            `http://localhost:3000/api/scoreboard`, 
+            "POST",
+            {
+                username: localStorage.getItem("username"),
+                score: numberOfGuessesLeft
+            }
+        ).then(result => {
+            console.log('Response:', result);
+        }).catch(error => {
+            console.error(error);
+        });
         setTimeout(resetGame, 3000);
         return;
     }
