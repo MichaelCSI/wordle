@@ -15,6 +15,7 @@ Feedback:
 - All other letters are not contained in the word (Gray)
 
 ## Instructions for running the game
+> You will need [Node](https://nodejs.org/en) installed on your machine
 - Open a terminal for the project i.e. ```.../wordle```
 - In the terminal, navigate to the source directory and install dependencies, then start client/server: 
   - ```npm install```
