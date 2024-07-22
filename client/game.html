@@ -1,26 +1,22 @@
-<?php
-session_start();
-
-// Refresh non-scoreboard data on page refresh
-if(isset($_SESSION['currentWord'])) {
-    $scoreboard = $_SESSION['scoreboard'];
-    $_SESSION = array();
-    $_SESSION['scoreboard'] = $scoreboard;
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./gameStyles.css">
     <title>Wordle</title>
 </head>
 <body>
     <h1> Wordle Clone </h1>
-    <p>Made by Michael O'Sullivan and Demian Oportus</p>
+    <div class="headerInfo">
+        <div class="navBar">
+            <a class="active" href="index.html">Home</a>
+            <a href="loginUser.html">User Login</a>
+            <a href="loginAdmin.html" id = "rightmost">Admin Login</a>
+        </div>
+        <span id="userUsername"></span>
+    </div>
     <hr>
     
     <!-- Container for the game layout -->

@@ -346,7 +346,13 @@ function updateScoreBoard(scoreArray) {
     }
 }
 
-function startGame() {    
+function startGame() {  
+    // Set name and username in top right  
+    const usernameElement = document.getElementById("userUsername");
+    let name = sessionStorage.getItem("personName");
+    let username = sessionStorage.getItem("username");
+    adminUsernameElement.innerText = name + ", " + username;
+    
     createLayout();
 
     // Set up listener for keyboard input and onClicks for UI keyboard
