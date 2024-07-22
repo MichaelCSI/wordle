@@ -27,8 +27,7 @@ The keyboard contains 3 rows of keys and acts as an interactable keyboard for th
 
 ### Win/Lose Popup
 
-A popup letting the user know when they have won (if they guess the word) or lost (if they exhaust their guesses). For a win, the user enters a username and their 
-username/score is entered into the scoreboard.
+A popup letting the user know when they have won (if they guess the word) or lost (if they exhaust their guesses).
 
 Win             |  Lose
 :-------------------------:|:-------------------------:
@@ -36,9 +35,9 @@ Win             |  Lose
 
 ### Scoreboard
 
-A popup after a win that lets the user see previous highscores
+A scoreboard that lets the user see top 10 highscores
 
-![Scoreboard screenshot](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/scoreboard.png)
+![Scoreboard screenshot](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/scoreboardComponent.png)
 
 ### Footer
 

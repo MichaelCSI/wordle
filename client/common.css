@@ -70,12 +70,7 @@ footer {
   justify-content: flex-start;
   align-items: center;
   margin-top: 2rem;
-  height: 80vh;
   box-sizing: border-box;
-  border-left: 2px solid ivory;
-  border-right: 2px solid ivory;
-  border-bottom: 1px solid ivory;
-  overflow: auto;
 }
 
 

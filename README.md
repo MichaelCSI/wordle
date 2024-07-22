@@ -28,7 +28,14 @@ Our application has two types of users: WordleUsers (play game) and Admins (mana
 
 Wordle users can create an account, login, and play the Wordle game. If they win, their score will be entered into the scoreboard. All users can view the scoreboard on the scoreboard page (available from nav bar). Admins are responsible for managing the scoreboard, and can delete a given score.
 
-## Screenshots
+## Page Screenshots
+![home](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/home.png)
+![userLogin](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/userLogin.png)
+![scoreboard](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/scoreboard.png)
+![adminLogin](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/adminLogin.png)
+![adminMain](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/adminMain.png)
+
+## Game Screenshots
 
 ![Wordle game screenshot 1 - Guess 0](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/wordle%201.png)
 ![Wordle game screenshot 2 - Guess 1](https://github.com/MichaelCSI/wordle/blob/master/docs/design_system/wordle%202.png)
