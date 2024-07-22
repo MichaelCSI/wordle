@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./pageStyles.css">
+    <link rel="stylesheet" href="./navAndFooter.css">
+    <title>Wordle</title>
+</head>
+<body>
+    <h1> Wordle Clone </h1>
+    <div class="headerInfo">
+        <div class="navBar">
+            <a class="active" href="index.html">Home</a>
+            <a href="loginUser.html">User Login</a>
+            <a href="scoreboard.html">Scoreboard</a>
+            <a href="loginAdmin.html" id = "rightmost">Admin Login</a>
+        </div>
+        <span>Made by Michael O'Sullivan and Demian Oportus</span>
+    </div>
+    
+    <div class="login">
+        <h3>Enter your admin login information</h3>
+        <p>
+            If you encounter an error, navigate back to login and try again <br>
+            Sample login info: admin, password
+        </p>
+        <h4 id="errorMsg"></h4>
+        <form id="loginForm" >
+            <label>Username:</label>
+            <input type="text" id="username" placeholder="Enter your Username" required>
+
+            <label>Password:</label>
+            <input type="password" id="password" placeholder="Enter your Password" required>
+
+            <button type="submit" id="login">Login</button>
+        </form>
+    </div>
+    <footer>
+      <div class="footerContent">
+        <p>&copy; 2024 Wordle App. All rights reserved.</p>
+      </div>
+    </footer>
+    <script src="./loginAdmin.js"></script>
+</body>
+</html>

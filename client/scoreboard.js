@@ -12,18 +12,13 @@ async function callEndpoint(endpoint, method, data = null) {
 
     const response = await fetch(endpoint, options);
     if (!response.ok) {
-        let msg = response.status === 404 ? "Score ID not found" : "Unknown server error";
-        throw new Error(msg);    }
+        throw new Error(response.status);    
+    }
 
     const result = await response.json();
     return result;
 }
 
-// Set name in top right to admin name and username
-const adminUsernameElement = document.getElementById("adminUsername");
-let adminName = localStorage.getItem("adminName");
-let adminUsername = localStorage.getItem("adminUsername");
-adminUsernameElement.innerText = adminName + ", " + adminUsername;
 
 // Fetch scoreboard list
 callEndpoint(
@@ -59,46 +54,6 @@ callEndpoint(
         
         scoreWrapper.appendChild(scoreElement);
     }
-    // Form for deleting score       
-    const errorMsg = document.createElement('h4');
-    errorMsg.id = "errorMsg";
-    scoreWrapper.appendChild(errorMsg);
-
-    const formDelete = document.createElement('form');
-
-    const idLabel = document.createElement('label');
-    idLabel.textContent = 'Score ID:';
-    formDelete.appendChild(idLabel);
-
-    const idInput = document.createElement('input');
-    idInput.type = 'number';
-    idInput.placeholder = 'Example: 010101010101010101';
-    idInput.required = true;
-    formDelete.appendChild(idInput);
-
-    const removeScoreButton = document.createElement('button');
-    removeScoreButton.type = 'submit';
-    removeScoreButton.className = 'completeButton';
-    removeScoreButton.textContent = 'Delete Score';
-    formDelete.appendChild(removeScoreButton);
-    
-    formDelete.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const deleteParams = new URLSearchParams({
-            scoreID: currentScore.score_id
-        }).toString();
-    
-        callEndpoint(
-            `http://localhost:3000/api/scoreboard?${deleteParams}`,
-            "DELETE"
-        )
-        .then(result => {
-            console.log('Response:', result);
-            window.location.reload();
-        }).catch(error => {
-            console.error(error);
-        });
-    });
 }).catch(error => {
     console.error(error);
     const errorMsg = document.getElementById("errorMsg");

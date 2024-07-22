@@ -187,7 +187,6 @@ app.delete("/api/scoreboard", async (req, res) => {
             return;
         }
 
-        // Delete from Homework and StudentHomework table
         const resultDelete = await client.query(deleteScoreText, [scoreID]);
 
         res.status(200).json({ 

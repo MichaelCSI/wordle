@@ -30,7 +30,7 @@ document.getElementById("createForm").addEventListener("submit", function (event
         `http://localhost:3000/api/createuser`, 
         "POST",
         {
-            studentUsername: username.value,
+            username: username.value,
             password: password.value,
             name: name.value
         }

@@ -35,8 +35,8 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
         "GET"
     ).then(result => {
         console.log('Response:', result);
-        sessionStorage.setItem("adminName", result.personName);
-        sessionStorage.setItem("adminUsername", result.username);
+        localStorage.setItem("adminName", result.personName);
+        localStorage.setItem("adminUsername", result.username);
         window.location.href = "http://localhost:8080/mainAdmin.html";
     }).catch(error => {
         console.error(error);

@@ -20,6 +20,7 @@ async function callEndpoint(endpoint, method, data = null) {
     return result;
 }
 
+
 document.getElementById("loginForm").addEventListener("submit", function (event) {
     event.preventDefault();
     const username = document.getElementById("username");
@@ -35,8 +36,8 @@ document.getElementById("loginForm").addEventListener("submit", function (event)
         "GET"
     ).then(result => {
         console.log('Response:', result);
-        sessionStorage.setItem("personName", result.personName);
-        sessionStorage.setItem("username", result.username);
+        localStorage.setItem("personName", result.personName);
+        localStorage.setItem("username", result.username);
         window.location.href = "http://localhost:8080/game.html";
     }).catch(error => {
         console.error(error);

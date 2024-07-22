@@ -16,10 +16,17 @@ Feedback:
 
 ## Instructions for running the game
 - Open a terminal for the project i.e. ```.../wordle```
-- In the terminal, navigate to the source directory and start the php server: 
-  - ```cd src && php -S localhost:4000```
-  - Note that ```localhost:4000``` is an example, other ports may be used as well
-- Navigate to ```localhost:4000``` in your browser and the game will appear
+- In the terminal, navigate to the source directory and install dependencies, then start client/server: 
+  - ```npm install```
+  - ```npm start```
+- Navigate to ```localhost:8080``` in your browser and the game will appear
+  - Note: Running ```npm start``` will output in the terminal where the web app is hosted
+
+## User documentation
+
+Our application has two types of users: WordleUsers (play game) and Admins (manage scoreboard).
+
+Wordle users can create an account, login, and play the Wordle game. If they win, their score will be entered into the scoreboard. All users can view the scoreboard on the scoreboard page (available from nav bar). Admins are responsible for managing the scoreboard, and can delete a given score.
 
 ## Screenshots
 

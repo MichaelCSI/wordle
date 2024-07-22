@@ -27,7 +27,7 @@ CREATE TABLE Scoreboard (
 );
 
 
--- Sample population for the DB is shown below with a student, teacher, and homework assignment
+-- Sample population for the DB is shown below
 
 -- Create admin
 WITH admin_sample AS (

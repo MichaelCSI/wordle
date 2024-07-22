@@ -1,15 +1,3 @@
-body {
-    background-color: rgb(31, 28, 28);
-    text-align: center;
-    color: ivory;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: Georgia, serif;
-    line-height: 1.5;
-    margin: 0;
-  }
-  
 hr {
   border-top: 4px dashed rgb(31, 28, 28);
   width: 100%;
@@ -23,36 +11,6 @@ img {
   width: 30%;
   height: 40%;
   border-radius: 2%;
-}
-
-.headerInfo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 90%;
-  gap: 30%;
-  border-bottom: 2px solid ivory;
-}
-
-.navBar {
-  overflow: hidden;
-}
-.navBar a {
-  float: left;
-  color: ivory;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-  transition: 0.5s;
-  border-left: 2px solid ivory;
-}
-.navBar #rightmost {
-  border-right: 2px solid ivory;
-}
-.navBar a:hover {
-  background-color: ivory;
-  color: rgb(31, 28, 28);
 }
 
 p, h3 {
@@ -146,6 +104,7 @@ button:hover {
 #scoreBoardWrapper {
   width: 60%;
   display: flex;
+  color: ivory;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
@@ -157,26 +116,3 @@ button:hover {
   border-bottom: 1px solid ivory;
   overflow: auto;
 }
-
-footer {
-  position: absolute;
-  top: 120vh;
-  background-color: rgb(45, 42, 42);
-  color: ivory;
-  padding: 10px 0;
-  width: 100%;
-  text-align: center;
-}
-
-.footerContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.footerContent p {
-  margin: 5px 0;
-  color: ivory;
-}
-  
